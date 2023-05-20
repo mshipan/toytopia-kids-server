@@ -35,6 +35,14 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/toys/:subCategory", async (req, res) => {
+      const category = req.params.subCategory;
+      const query = { subCategory: category };
+      const cursor = toyCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.get("/mytoys/:email", async (req, res) => {
       const email = req.params.email;
       const query = { sellerEmail: email };

@@ -29,8 +29,24 @@ async function run() {
 
     const toyCollection = client.db("toyDB").collection("toys");
 
+    const indexKeys = { name: 1 };
+    const indexOptions = { name: "toyName" };
+
+    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+
+    app.get("/toySearchByName/:text", async (req, res) => {
+      const text = req.params.text;
+      const result = await toyCollection
+        .find({
+          $or: [{ name: { $regex: text, $options: "i" } }],
+        })
+        .toArray();
+
+      res.send(result);
+    });
+
     app.get("/toys", async (req, res) => {
-      const cursor = toyCollection.find();
+      const cursor = toyCollection.find().limit(20); // this is the limit method, for this all toys page show only 20 data by default, by removing .limit(20) it will show all toys added
       const result = await cursor.toArray();
       res.send(result);
     });

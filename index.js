@@ -62,8 +62,15 @@ async function run() {
     app.get("/mytoys/:email", async (req, res) => {
       const email = req.params.email;
       const query = { sellerEmail: email };
-      const cursor = toyCollection.find(query);
-      const result = await cursor.toArray();
+      const sortBy = req.query.sort === "1" ? 1 : -1; // 1 for ascending, -1 for descending
+
+      const pipeline = [
+        { $match: query },
+        { $addFields: { price: { $toInt: "$price" } } },
+        { $sort: { price: sortBy } },
+      ];
+
+      const result = await toyCollection.aggregate(pipeline).toArray();
       res.send(result);
     });
 

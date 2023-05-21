@@ -7,11 +7,12 @@ const port = process.env.PORT || 5000;
 
 // middleware
 const corsConfig = {
-  origin: "https://toytopia-kids.web.app",
+  origin: "*",
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
 app.use(cors(corsConfig));
+app.options("", cors(corsConfig));
 
 app.use(express.json());
 
@@ -31,7 +32,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const toyCollection = client.db("toyDB").collection("toys");
 
